@@ -1,172 +1,167 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>जनप्रतिनिधि राजकाज | भारत के लोकतंत्र के कर्णधार</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
   <style>
-    body { margin: 0; font-family: sans-serif; background: #f5f5f5; }
+    body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
+    header { background: #004080; color: white; padding: 1em; text-align: center; }
     .swiper { width: 100%; height: auto; }
     .swiper-slide img { width: 100%; height: auto; object-fit: cover; }
-    .filters { padding: 1rem; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; background: white; }
-    select { padding: 0.5rem; font-size: 1rem; min-width: 150px; }
-    .grid-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; padding: 1rem; }
+    .filters { padding: 1em; display: flex; flex-wrap: wrap; gap: 1em; background: #fff; }
+    .filters select { padding: 0.5em; font-size: 1em; }
+    .grid { display: flex; flex-wrap: wrap; padding: 1em; gap: 1em; justify-content: center; }
     .card {
-      background: white; border-radius: 10px; padding: 1rem; width: 300px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: 0.3s;
+      background: white; padding: 1em; width: 300px; border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: 0.3s;
     }
-    .card img { width: 100%; border-radius: 8px; height: 200px; object-fit: cover; }
-    .card h3 { margin: 0.5rem 0 0.2rem; font-size: 1.2rem; }
-    .card p { margin: 0; font-size: 0.9rem; color: #555; }
-    .links a { margin-right: 5px; font-size: 0.9rem; text-decoration: none; color: #007bff; }
-    @media (max-width: 768px) {
-      .grid-container { overflow-x: auto; flex-wrap: nowrap; }
+    .card:hover { transform: scale(1.02); }
+    img { max-width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
+    .social a { margin-right: 0.5em; text-decoration: none; }
+    @media (max-width: 600px) {
+      .grid { overflow-x: scroll; flex-wrap: nowrap; }
       .card { flex: 0 0 80%; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Banner Slider -->
-  <div class="swiper">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image.jpg?alt=media&token=3e5bab12-d249-418d-b7dd-4095fa7d6dc8" />
-      </div>
-      <div class="swiper-slide">
-        <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image%202%20.jpg?alt=media&token=8685ec16-300d-47f3-b48b-d8262ebfee8e" />
-      </div>
+<header>
+  <h1>जनप्रतिनिधि राजकाज</h1>
+  <p>भारत के लोकतंत्र के कर्णधार</p>
+</header>
+
+<!-- Banner Slider -->
+<div class="swiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">
+      <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image.jpg?alt=media&token=3e5bab12-d249-418d-b7dd-4095fa7d6dc8" />
+    </div>
+    <div class="swiper-slide">
+      <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image%202%20.jpg?alt=media&token=8685ec16-300d-47f3-b48b-d8262ebfee8e" />
     </div>
   </div>
+</div>
 
-  <!-- Filters -->
-  <div class="filters">
-    <select id="stateFilter"><option value="">राज्य</option></select>
-    <select id="districtFilter"><option value="">जिला</option></select>
-    <select id="blockFilter"><option value="">ब्लॉक</option></select>
-    <select id="designationFilter"><option value="">पद</option></select>
-    <select id="periodFilter"><option value="">अवधि</option></select>
-  </div>
+<div class="filters">
+  <select id="stateFilter"><option value="">राज्य चुनें</option></select>
+  <select id="districtFilter"><option value="">जिला चुनें</option></select>
+  <select id="blockFilter"><option value="">ब्लॉक चुनें</option></select>
+  <select id="designationFilter"><option value="">पद चुनें</option></select>
+  <select id="periodFilter"><option value="">अवधि चुनें</option></select>
+</div>
 
-  <!-- Cards Grid -->
-  <div class="grid-container" id="cardsContainer"></div>
+<div class="grid" id="cardGrid">Loading...</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-  <script>
-    const stateFilter = document.getElementById("stateFilter");
-    const districtFilter = document.getElementById("districtFilter");
-    const blockFilter = document.getElementById("blockFilter");
-    const designationFilter = document.getElementById("designationFilter");
-    const periodFilter = document.getElementById("periodFilter");
-    const cardsContainer = document.getElementById("cardsContainer");
-
-    const dataMap = [];
-
-    fetch("sample-data.csv")
-      .then(response => response.text())
-      .then(csv => {
-        const result = Papa.parse(csv, { header: true });
-        dataMap.push(...result.data);
-        populateFilters(dataMap);
-        renderCards(dataMap);
-      });
-
-    function populateFilters(data) {
-      const states = [...new Set(data.map(d => d.State))].sort();
-      states.forEach(state => {
-        const opt = document.createElement("option");
-        opt.value = state; opt.text = state;
-        stateFilter.appendChild(opt);
-      });
-
-      stateFilter.addEventListener("change", () => {
-        const selectedState = stateFilter.value;
-        const districts = [...new Set(data.filter(d => d.State === selectedState).map(d => d.District))].sort();
-        districtFilter.innerHTML = '<option value="">जिला</option>';
-        blockFilter.innerHTML = '<option value="">ब्लॉक</option>';
-        districts.forEach(d => {
-          const opt = document.createElement("option");
-          opt.value = d; opt.text = d;
-          districtFilter.appendChild(opt);
-        });
-        renderCards(data);
-      });
-
-      districtFilter.addEventListener("change", () => {
-        const selectedState = stateFilter.value;
-        const selectedDistrict = districtFilter.value;
-        const blocks = [...new Set(data.filter(d => d.State === selectedState && d.District === selectedDistrict).map(d => d.Block))].sort();
-        blockFilter.innerHTML = '<option value="">ब्लॉक</option>';
-        blocks.forEach(b => {
-          const opt = document.createElement("option");
-          opt.value = b; opt.text = b;
-          blockFilter.appendChild(opt);
-        });
-        renderCards(data);
-      });
-
-      blockFilter.addEventListener("change", () => renderCards(data));
-      designationFilter.addEventListener("change", () => renderCards(data));
-      periodFilter.addEventListener("change", () => renderCards(data));
-
-      const designations = [...new Set(data.map(d => d.Designation))].sort();
-      designations.forEach(des => {
-        const opt = document.createElement("option");
-        opt.value = des; opt.text = des;
-        designationFilter.appendChild(opt);
-      });
-
-      const periods = [...new Set(data.map(d => d.Period))].sort();
-      periods.forEach(per => {
-        const opt = document.createElement("option");
-        opt.value = per; opt.text = per;
-        periodFilter.appendChild(opt);
-      });
-    }
-
-    function renderCards(data) {
-      const state = stateFilter.value;
-      const district = districtFilter.value;
-      const block = blockFilter.value;
-      const designation = designationFilter.value;
-      const period = periodFilter.value;
-
-      const filtered = data.filter(d =>
-        (!state || d.State === state) &&
-        (!district || d.District === district) &&
-        (!block || d.Block === block) &&
-        (!designation || d.Designation === designation) &&
-        (!period || d.Period === period)
-      );
-
-      cardsContainer.innerHTML = "";
-      filtered.forEach(d => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${d.ImageURL || 'https://via.placeholder.com/300x200'}" alt="${d.Name}" />
-          <h3>${d.Name}</h3>
-          <p>${d.Designation || ''}</p>
-          <p>${d.Village || ''}</p>
-          <p>${d.Education || ''}</p>
-          <div class="links">
-            ${d.FBLink ? `<a href="${d.FBLink}" target="_blank">FB</a>` : ""}
-            ${d.TwitterLink ? `<a href="${d.TwitterLink}" target="_blank">Twitter</a>` : ""}
-            ${d.WhatsAppLink ? `<a href="${d.WhatsAppLink}" target="_blank">WA</a>` : ""}
-            ${d.BlogLink ? `<a href="${d.BlogLink}" target="_blank">Blog</a>` : ""}
-          </div>
-        `;
-        cardsContainer.appendChild(card);
-      });
-    }
-
-    new Swiper('.swiper', {
-      loop: true,
-      autoplay: { delay: 4000 },
-      pagination: { el: '.swiper-pagination', clickable: true },
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+let data = [];
+fetch('sample-data.csv')
+  .then(res => res.text())
+  .then(csv => {
+    const lines = csv.split('\n').slice(1);
+    data = lines.map(line => {
+      const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog] = line.split(',');
+      return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog };
     });
-  </script>
+    populateFilters();
+    renderCards(data);
+  });
+
+function populateFilters() {
+  const stateSet = new Set(), designationSet = new Set(), periodSet = new Set();
+  data.forEach(d => {
+    if (d.state) stateSet.add(d.state);
+    if (d.designation) designationSet.add(d.designation);
+    if (d.period) periodSet.add(d.period);
+  });
+
+  fillSelect('stateFilter', stateSet);
+  fillSelect('designationFilter', designationSet);
+  fillSelect('periodFilter', periodSet);
+
+  document.getElementById('stateFilter').addEventListener('change', () => {
+    const selectedState = document.getElementById('stateFilter').value;
+    const districts = new Set(data.filter(d => d.state === selectedState).map(d => d.district));
+    fillSelect('districtFilter', districts, true);
+
+    document.getElementById('districtFilter').dispatchEvent(new Event('change'));
+  });
+
+  document.getElementById('districtFilter').addEventListener('change', () => {
+    const selectedState = document.getElementById('stateFilter').value;
+    const selectedDistrict = document.getElementById('districtFilter').value;
+    const blocks = new Set(data.filter(d => d.state === selectedState && d.district === selectedDistrict).map(d => d.block));
+    fillSelect('blockFilter', blocks, true);
+  });
+}
+
+function fillSelect(id, set, reset = false) {
+  const select = document.getElementById(id);
+  if (reset) select.innerHTML = `<option value="">${select.options[0].text}</option>`;
+  set.forEach(val => {
+    const opt = document.createElement('option');
+    opt.value = val;
+    opt.textContent = val;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', filterData);
+}
+
+function filterData() {
+  const state = document.getElementById('stateFilter').value;
+  const district = document.getElementById('districtFilter').value;
+  const block = document.getElementById('blockFilter').value;
+  const designation = document.getElementById('designationFilter').value;
+  const period = document.getElementById('periodFilter').value;
+
+  const filtered = data.filter(d =>
+    (!state || d.state === state) &&
+    (!district || d.district === district) &&
+    (!block || d.block === block) &&
+    (!designation || d.designation === designation) &&
+    (!period || d.period === period)
+  );
+
+  renderCards(filtered);
+}
+
+function renderCards(dataset) {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  if (dataset.length === 0) {
+    grid.innerHTML = '<p>No results found.</p>';
+    return;
+  }
+  dataset.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
+      <h3>${d.name}</h3>
+      <p><strong>पद:</strong> ${d.designation}</p>
+      <p><strong>गांव:</strong> ${d.village}</p>
+      <p><strong>शिक्षा:</strong> ${d.education}</p>
+      <div class="social">
+        ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
+        ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
+        ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
+        ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+new Swiper('.swiper', {
+  loop: true,
+  autoplay: { delay: 4000 },
+  pagination: { el: '.swiper-pagination', clickable: true },
+});
+</script>
+
 </body>
 </html>
