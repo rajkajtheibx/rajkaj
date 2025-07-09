@@ -4,21 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>जनप्रतिनिधि राजकाज | भारत के लोकतंत्र के कर्णधार</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
+
     header { background: #004080; color: white; padding: 1em; text-align: center; }
-    .swiper { width: 100%; height: auto; }
-    .swiper-slide img { width: 100%; height: auto; object-fit: cover; }
+
+    .slider {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .slider img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .filters {
       padding: 1em;
       display: flex;
       flex-wrap: wrap;
       gap: 1em;
-      justify-content: center;
       background: #fff;
+      justify-content: center;
     }
-    .filters select { padding: 0.5em; font-size: 1em; }
+
+    .filters select {
+      padding: 0.5em;
+      font-size: 1em;
+    }
+
     .grid {
       display: flex;
       flex-wrap: wrap;
@@ -26,44 +42,55 @@
       gap: 1em;
       justify-content: center;
     }
+
     .card {
-      width: 22%;
+      background: white;
       padding: 1em;
+      width: 22%;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       transition: 0.3s;
       position: relative;
-      background: white;
     }
-    .card:hover { transform: scale(1.02); }
-    .card img { width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
-    .social a, .actions button {
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    img.profile {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .social a {
       margin-right: 0.5em;
       text-decoration: none;
-      font-size: 1em;
     }
+
     .actions {
       margin-top: 0.5em;
     }
+
     .actions button {
       background: none;
       border: none;
       cursor: pointer;
+      margin-right: 0.5em;
+      font-size: 1.5em;
     }
-    .download-icon {
-      font-weight: bold;
-      font-size: 1.2em;
-    }
+
     @media (max-width: 768px) {
       .grid {
         overflow-x: auto;
         flex-wrap: nowrap;
-        justify-content: flex-start;
         scroll-snap-type: x mandatory;
       }
+
       .card {
         flex: 0 0 90%;
-        scroll-snap-align: start;
+        scroll-snap-align: center;
       }
     }
   </style>
@@ -75,18 +102,13 @@
   <p>भारत के लोकतंत्र के कर्णधार</p>
 </header>
 
-<!-- Banner Slider -->
-<div class="swiper">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide">
-      <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image.jpg?alt=media&token=3e5bab12-d249-418d-b7dd-4095fa7d6dc8" />
-    </div>
-    <div class="swiper-slide">
-      <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image%202%20.jpg?alt=media&token=8685ec16-300d-47f3-b48b-d8262ebfee8e" />
-    </div>
-  </div>
+<!-- Slider -->
+<div class="slider">
+  <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image.jpg?alt=media&token=3e5bab12-d249-418d-b7dd-4095fa7d6dc8" alt="Banner 1">
+  <img src="https://firebasestorage.googleapis.com/v0/b/rajkajtheibx.firebasestorage.app/o/Banner%20Image%202%20.jpg?alt=media&token=8685ec16-300d-47f3-b48b-d8262ebfee8e" alt="Banner 2">
 </div>
 
+<!-- Filters -->
 <div class="filters">
   <select id="stateFilter"><option value="">राज्य चुनें</option></select>
   <select id="districtFilter"><option value="">जिला चुनें</option></select>
@@ -95,141 +117,120 @@
   <select id="periodFilter"><option value="">अवधि चुनें</option></select>
 </div>
 
+<!-- Grid -->
 <div class="grid" id="cardGrid">Loading...</div>
 
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-const cardColors = [
-  '#FFF8E1','#E1F5FE','#F1F8E9','#FBE9E7','#EDE7F6',
-  '#E8F5E9','#FFF3E0','#F3E5F5','#E0F7FA','#FFEBEE',
-  '#E0F2F1','#FFFDE7'
-];
-let data = [];
-fetch('sample-data.csv')
-  .then(res => res.text())
-  .then(csv => {
-    const lines = csv.split('\n').slice(1);
-    data = lines.map(line => {
-      const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog] = line.split(',');
-      return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog };
+  let data = [];
+  const cardColors = [
+    '#FFF8E1','#E1F5FE','#F1F8E9','#FBE9E7','#EDE7F6','#E8F5E9',
+    '#FFF3E0','#F3E5F5','#E0F7FA','#FFEBEE','#E0F2F1','#FFFDE7'
+  ];
+
+  fetch('sample-data.csv')
+    .then(res => res.text())
+    .then(csv => {
+      const lines = csv.split('\\n').slice(1);
+      data = lines.map(line => {
+        const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog] = line.split(',');
+        return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog };
+      });
+      populateFilters();
+      renderCards(data);
     });
-    populateFilters();
-    renderCards(data);
-  });
 
-function populateFilters() {
-  const stateSet = new Set(), designationSet = new Set(), periodSet = new Set();
-  data.forEach(d => {
-    if (d.state) stateSet.add(d.state);
-    if (d.designation) designationSet.add(d.designation);
-    if (d.period) periodSet.add(d.period);
-  });
-  fillSelect('stateFilter', stateSet);
-  fillSelect('designationFilter', designationSet);
-  fillSelect('periodFilter', periodSet);
-
-  document.getElementById('stateFilter').addEventListener('change', () => {
-    const selectedState = document.getElementById('stateFilter').value;
-    const districts = new Set(data.filter(d => d.state === selectedState).map(d => d.district));
-    fillSelect('districtFilter', districts, true);
-    document.getElementById('districtFilter').dispatchEvent(new Event('change'));
-  });
-
-  document.getElementById('districtFilter').addEventListener('change', () => {
-    const selectedState = document.getElementById('stateFilter').value;
-    const selectedDistrict = document.getElementById('districtFilter').value;
-    const blocks = new Set(data.filter(d => d.state === selectedState && d.district === selectedDistrict).map(d => d.block));
-    fillSelect('blockFilter', blocks, true);
-  });
-}
-
-function fillSelect(id, set, reset = false) {
-  const select = document.getElementById(id);
-  if (reset) select.innerHTML = `<option value="">${select.options[0].text}</option>`;
-  set.forEach(val => {
-    const opt = document.createElement('option');
-    opt.value = val;
-    opt.textContent = val;
-    select.appendChild(opt);
-  });
-  select.addEventListener('change', filterData);
-}
-
-function filterData() {
-  const state = document.getElementById('stateFilter').value;
-  const district = document.getElementById('districtFilter').value;
-  const block = document.getElementById('blockFilter').value;
-  const designation = document.getElementById('designationFilter').value;
-  const period = document.getElementById('periodFilter').value;
-  const filtered = data.filter(d =>
-    (!state || d.state === state) &&
-    (!district || d.district === district) &&
-    (!block || d.block === block) &&
-    (!designation || d.designation === designation) &&
-    (!period || d.period === period)
-  );
-  renderCards(filtered);
-}
-
-function downloadCard(card, name) {
-  html2canvas(card, {
-    allowTaint: true,
-    useCORS: true,
-    backgroundColor: null,
-    scrollX: 0,
-    scrollY: 0,
-    windowWidth: document.body.scrollWidth,
-    windowHeight: document.body.scrollHeight
-  }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = name + '.png';
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  });
-}
-
-function shareCard(name) {
-  if (navigator.share) {
-    navigator.share({
-      title: 'जनप्रतिनिधि कार्ड',
-      text: `जनप्रतिनिधि: ${name}`,
-      url: window.location.href
+  function populateFilters() {
+    const states = new Set(), districts = new Set(), blocks = new Set(), designations = new Set(), periods = new Set();
+    data.forEach(d => {
+      if (d.state) states.add(d.state);
+      if (d.district) districts.add(d.district);
+      if (d.block) blocks.add(d.block);
+      if (d.designation) designations.add(d.designation);
+      if (d.period) periods.add(d.period);
     });
-  } else {
-    alert("Sharing not supported on this browser.");
+    fillSelect('stateFilter', states);
+    fillSelect('districtFilter', districts);
+    fillSelect('blockFilter', blocks);
+    fillSelect('designationFilter', designations);
+    fillSelect('periodFilter', periods);
   }
-}
 
-function renderCards(dataset) {
-  const grid = document.getElementById('cardGrid');
-  grid.innerHTML = '';
-  if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
-  dataset.forEach((d, i) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.backgroundColor = cardColors[i % cardColors.length];
-    card.innerHTML = `
-      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
-      <h3>${d.name}</h3>
-      <p><strong>पद:</strong> ${d.designation}</p>
-      <p><strong>गांव:</strong> ${d.village}</p>
-      <p><strong>शिक्षा:</strong> ${d.education}</p>
-      <div class="social">
-        ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
-        ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
-        ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
-        ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
-      </div>
-      <div class="actions">
-        <button class="download-icon" onclick="downloadCard(this.closest('.card'), '${d.name}')">⬇️</button>
-        <button onclick="shareCard('${d.name}')">📤 Share</button>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
+  function fillSelect(id, set) {
+    const select = document.getElementById(id);
+    set.forEach(val => {
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = val;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', filterData);
+  }
 
-new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
+  function filterData() {
+    const state = document.getElementById('stateFilter').value;
+    const district = document.getElementById('districtFilter').value;
+    const block = document.getElementById('blockFilter').value;
+    const designation = document.getElementById('designationFilter').value;
+    const period = document.getElementById('periodFilter').value;
+
+    const filtered = data.filter(d =>
+      (!state || d.state === state) &&
+      (!district || d.district === district) &&
+      (!block || d.block === block) &&
+      (!designation || d.designation === designation) &&
+      (!period || d.period === period)
+    );
+
+    renderCards(filtered);
+  }
+
+  function renderCards(dataset) {
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = '';
+    if (dataset.length === 0) {
+      grid.innerHTML = '<p>No results found.</p>';
+      return;
+    }
+    dataset.forEach((d, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.backgroundColor = cardColors[i % cardColors.length];
+      card.innerHTML = `
+        <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}"
+             alt="${d.name}" class="profile" crossorigin="anonymous">
+        <h3>${d.name}</h3>
+        <p><strong>पद:</strong> ${d.designation}</p>
+        <p><strong>गांव:</strong> ${d.village}</p>
+        <p><strong>शिक्षा:</strong> ${d.education}</p>
+        <div class="social">
+          ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
+          ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
+          ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
+          ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
+        </div>
+        <div class="actions">
+          <button onclick="downloadCard(this.closest('.card'), '${d.name}')">⬇️</button>
+          <button onclick="navigator.share ? navigator.share({title: '${d.name}', url: window.location.href}) : alert('Sharing not supported')">📤</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function downloadCard(card, name) {
+    html2canvas(card, {
+      allowTaint: true,
+      useCORS: true,
+      imageTimeout: 15000,
+      scale: 2
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `${name}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  }
 </script>
+
 </body>
 </html>
