@@ -11,19 +11,56 @@
     header { background: #004080; color: white; padding: 1em; text-align: center; }
     .swiper { width: 100%; height: auto; }
     .swiper-slide img { width: 100%; height: auto; object-fit: cover; }
-    .filters { padding: 1em; display: flex; flex-wrap: wrap; gap: 1em; background: #fff; }
+    .filters {
+      padding: 1em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      justify-content: center;
+      background: #fff;
+    }
     .filters select { padding: 0.5em; font-size: 1em; }
-    .grid { display: flex; flex-wrap: wrap; padding: 1em; gap: 1em; justify-content: center; }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 1em;
+      gap: 1em;
+      justify-content: center;
+    }
     .card {
-      background: white; padding: 1em; width: 300px; border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: 0.3s;
+      width: 22%;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      position: relative;
     }
     .card:hover { transform: scale(1.02); }
-    img { max-width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
-    .social a { margin-right: 0.5em; text-decoration: none; }
-    @media (max-width: 600px) {
-      .grid { overflow-x: scroll; flex-wrap: nowrap; }
-      .card { flex: 0 0 80%; }
+    .card img { width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
+    .social a, .actions button {
+      margin-right: 0.5em;
+      text-decoration: none;
+      font-size: 0.9em;
+    }
+    .actions {
+      margin-top: 0.5em;
+    }
+    .actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .grid {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        scroll-snap-type: x mandatory;
+      }
+      .card {
+        flex: 0 0 90%;
+        scroll-snap-align: start;
+      }
     }
   </style>
 </head>
@@ -57,7 +94,13 @@
 <div class="grid" id="cardGrid">Loading...</div>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+const cardColors = [
+  '#FFF8E1','#E1F5FE','#F1F8E9','#FBE9E7','#EDE7F6',
+  '#E8F5E9','#FFF3E0','#F3E5F5','#E0F7FA','#FFEBEE',
+  '#E0F2F1','#FFFDE7'
+];
 let data = [];
 fetch('sample-data.csv')
   .then(res => res.text())
@@ -78,7 +121,6 @@ function populateFilters() {
     if (d.designation) designationSet.add(d.designation);
     if (d.period) periodSet.add(d.period);
   });
-
   fillSelect('stateFilter', stateSet);
   fillSelect('designationFilter', designationSet);
   fillSelect('periodFilter', periodSet);
@@ -87,7 +129,6 @@ function populateFilters() {
     const selectedState = document.getElementById('stateFilter').value;
     const districts = new Set(data.filter(d => d.state === selectedState).map(d => d.district));
     fillSelect('districtFilter', districts, true);
-
     document.getElementById('districtFilter').dispatchEvent(new Event('change'));
   });
 
@@ -117,7 +158,6 @@ function filterData() {
   const block = document.getElementById('blockFilter').value;
   const designation = document.getElementById('designationFilter').value;
   const period = document.getElementById('periodFilter').value;
-
   const filtered = data.filter(d =>
     (!state || d.state === state) &&
     (!district || d.district === district) &&
@@ -125,20 +165,38 @@ function filterData() {
     (!designation || d.designation === designation) &&
     (!period || d.period === period)
   );
-
   renderCards(filtered);
+}
+
+function downloadCard(card, name) {
+  html2canvas(card).then(canvas => {
+    const link = document.createElement('a');
+    link.download = name + '.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+
+function shareCard(name) {
+  if (navigator.share) {
+    navigator.share({
+      title: 'जनप्रतिनिधि कार्ड',
+      text: `जनप्रतिनिधि: ${name}`,
+      url: window.location.href
+    });
+  } else {
+    alert("Sharing not supported on this browser.");
+  }
 }
 
 function renderCards(dataset) {
   const grid = document.getElementById('cardGrid');
   grid.innerHTML = '';
-  if (dataset.length === 0) {
-    grid.innerHTML = '<p>No results found.</p>';
-    return;
-  }
-  dataset.forEach(d => {
+  if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
+  dataset.forEach((d, i) => {
     const card = document.createElement('div');
     card.className = 'card';
+    card.style.backgroundColor = cardColors[i % cardColors.length];
     card.innerHTML = `
       <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
       <h3>${d.name}</h3>
@@ -151,17 +209,15 @@ function renderCards(dataset) {
         ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
         ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
       </div>
-    `;
+      <div class="actions">
+        <button onclick="downloadCard(this.closest('.card'), '${d.name}')">⬇</button>
+        <button onclick="shareCard('${d.name}')">📤 Share</button>
+      </div>`;
     grid.appendChild(card);
   });
 }
 
-new Swiper('.swiper', {
-  loop: true,
-  autoplay: { delay: 4000 },
-  pagination: { el: '.swiper-pagination', clickable: true },
-});
+new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
 </script>
-
 </body>
 </html>
