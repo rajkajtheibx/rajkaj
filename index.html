@@ -81,17 +81,16 @@ header p {
     }
 
     @media (max-width: 768px) {
-      .grid {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        scroll-snap-type: x mandatory;
-      }
-      .card {
-        flex: 0 0 90%;
-        scroll-snap-align: start;
-      }
-    }
+  .grid {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+  .card {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
   </style>
 </head>
 <body>
