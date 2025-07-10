@@ -220,7 +220,7 @@ function renderCards(dataset) {
     card.className = 'card';
     card.style.backgroundColor = cardColors[i % cardColors.length];
     card.innerHTML = `
-      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
+      <img src="${d.image && d.image.trim() !== '' ? d.image : 'default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
       <p><strong>पद:</strong> ${d.designation}</p>
       <p><strong>गांव:</strong> ${d.village}</p>
