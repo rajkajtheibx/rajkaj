@@ -137,9 +137,10 @@ fetch('sample-data.csv')
   .then(csv => {
     const lines = csv.split('\n').slice(1);
     data = lines.map(line => {
-      const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog] = line.split(',');
-      return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog };
+      const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog,publish] = line.split(',');
+      return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog,publish };
     });
+    data = data.filter(d => d.publish?.trim().toLowerCase() === "yes");
     populateFilters();
     renderCards(data);
   });
