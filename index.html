@@ -248,10 +248,9 @@ function renderCardsInChunks() {
     card.innerHTML = `
       <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
-      <p><strong>पद:</strong> ${d.designation}</p>
-      <p><strong>गांव:</strong> ${d.village}</p>
-      <p><strong>शिक्षा:</strong> ${d.education}</p>
-      <div class="social-share">
+  ${d.designation ? `<p><strong>पद:</strong> ${d.designation}</p>` : ''}
+  ${d.village ? `<p><strong>गांव:</strong> ${d.village}</p>` : ''}
+  ${d.education ? `<p><strong>शिक्षा:</strong> ${d.education}</p>` : ''}      <div class="social-share">
         ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
         ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
         ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WhatsApp</a>` : ''}
