@@ -47,12 +47,12 @@ header p {
       justify-content: center;
     }
     .card {
-      width: 22%;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      transition: 0.3s;
-      position: relative;
+      width: calc(25% - 1em); /* 4 cards per row, considering gap */
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  position: relative;
       background-color: #fff;
     }
     .card:hover { transform: scale(1.02); }
