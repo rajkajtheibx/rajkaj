@@ -122,7 +122,11 @@ header p {
 </div>
 
 <div class="grid" id="cardGrid">Loading...</div>
-
+<div style="text-align: center; margin-bottom: 2em;">
+  <button id="loadMoreBtn" style="padding: 0.6em 1.5em; font-size: 1em; background-color: #bb1f5b; color: white; border: none; border-radius: 6px; cursor: pointer;">
+    Show More | और दिखाओ
+  </button>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 <script>
 const cardColors = [
@@ -211,16 +215,28 @@ function shareCard(name) {
   }
 }
 
+let currentIndex = 0;
+const pageSize = 100;
+let filteredDataset = [];
+
 function renderCards(dataset) {
   const grid = document.getElementById('cardGrid');
   grid.innerHTML = '';
-  if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
-  dataset.forEach((d, i) => {
+  currentIndex = 0;
+  filteredDataset = dataset;
+  document.getElementById('loadMoreBtn').style.display = dataset.length > pageSize ? 'inline-block' : 'none';
+  renderCardsInChunks();
+}
+
+function renderCardsInChunks() {
+  const grid = document.getElementById('cardGrid');
+  const nextItems = filteredDataset.slice(currentIndex, currentIndex + pageSize);
+  nextItems.forEach((d, i) => {
     const card = document.createElement('div');
     card.className = 'card';
-    card.style.backgroundColor = cardColors[i % cardColors.length];
+    card.style.backgroundColor = cardColors[(currentIndex + i) % cardColors.length];
     card.innerHTML = `
-      <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : 'default.jpg'}" alt="${d.name}">
+      <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
       <p><strong>पद:</strong> ${d.designation}</p>
       <p><strong>गांव:</strong> ${d.village}</p>
@@ -234,9 +250,14 @@ function renderCards(dataset) {
       </div>`;
     grid.appendChild(card);
   });
+  currentIndex += pageSize;
+  if (currentIndex >= filteredDataset.length) {
+    document.getElementById('loadMoreBtn').style.display = 'none';
+  }
 }
 
 new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
+document.getElementById('loadMoreBtn').addEventListener('click', renderCardsInChunks);
 </script>
 
 </body>
