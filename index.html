@@ -103,4 +103,128 @@
 <!-- Filters -->
 <div class="filters">
   <select id="stateFilter"><option value="">राज्य चुनें</option></select>
-  <select id="districtFilter"><option value="">जिला चुनें</o
+  <select id="districtFilter"><option value="">जिला चुनें</option></select>
+  <select id="blockFilter"><option value="">ब्लॉक चुनें</option></select>
+  <select id="designationFilter"><option value="">पद चुनें</option></select>
+  <select id="periodFilter"><option value="">अवधि चुनें</option></select>
+</div>
+
+<div class="grid" id="cardGrid">Loading...</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+const cardColors = [
+  '#FFF8E1','#E1F5FE','#F1F8E9','#FBE9E7','#EDE7F6',
+  '#E8F5E9','#FFF3E0','#F3E5F5','#E0F7FA','#FFEBEE',
+  '#E0F2F1','#FFFDE7'
+];
+
+let data = [];
+fetch('sample-data.csv')
+  .then(res => res.text())
+  .then(csv => {
+    const lines = csv.split('\n').slice(1);
+    data = lines.map(line => {
+      const [name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog] = line.split(',');
+      return { name, designation, period, state, district, block, village, education, image, fb, twitter, whatsapp, blog };
+    });
+    populateFilters();
+    renderCards(data);
+  });
+
+function populateFilters() {
+  const stateSet = new Set(), designationSet = new Set(), periodSet = new Set();
+  data.forEach(d => {
+    if (d.state) stateSet.add(d.state);
+    if (d.designation) designationSet.add(d.designation);
+    if (d.period) periodSet.add(d.period);
+  });
+  fillSelect('stateFilter', stateSet);
+  fillSelect('designationFilter', designationSet);
+  fillSelect('periodFilter', periodSet);
+
+  document.getElementById('stateFilter').addEventListener('change', () => {
+    const selectedState = document.getElementById('stateFilter').value;
+    const districts = new Set(data.filter(d => d.state === selectedState).map(d => d.district));
+    fillSelect('districtFilter', districts, true);
+    document.getElementById('districtFilter').dispatchEvent(new Event('change'));
+  });
+
+  document.getElementById('districtFilter').addEventListener('change', () => {
+    const selectedState = document.getElementById('stateFilter').value;
+    const selectedDistrict = document.getElementById('districtFilter').value;
+    const blocks = new Set(data.filter(d => d.state === selectedState && d.district === selectedDistrict).map(d => d.block));
+    fillSelect('blockFilter', blocks, true);
+  });
+}
+
+function fillSelect(id, set, reset = false) {
+  const select = document.getElementById(id);
+  if (reset) select.innerHTML = `<option value="">${select.options[0].text}</option>`;
+  set.forEach(val => {
+    const opt = document.createElement('option');
+    opt.value = val;
+    opt.textContent = val;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', filterData);
+}
+
+function filterData() {
+  const state = document.getElementById('stateFilter').value;
+  const district = document.getElementById('districtFilter').value;
+  const block = document.getElementById('blockFilter').value;
+  const designation = document.getElementById('designationFilter').value;
+  const period = document.getElementById('periodFilter').value;
+  const filtered = data.filter(d =>
+    (!state || d.state === state) &&
+    (!district || d.district === district) &&
+    (!block || d.block === block) &&
+    (!designation || d.designation === designation) &&
+    (!period || d.period === period)
+  );
+  renderCards(filtered);
+}
+
+function shareCard(name) {
+  if (navigator.share) {
+    navigator.share({
+      title: 'जनप्रतिनिधि कार्ड',
+      text: `जनप्रतिनिधि: ${name}`,
+      url: window.location.href
+    });
+  } else {
+    alert("Sharing not supported on this browser.");
+  }
+}
+
+function renderCards(dataset) {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
+  dataset.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.backgroundColor = cardColors[i % cardColors.length];
+    card.innerHTML = `
+      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
+      <h3>${d.name}</h3>
+      <p><strong>पद:</strong> ${d.designation}</p>
+      <p><strong>गांव:</strong> ${d.village}</p>
+      <p><strong>शिक्षा:</strong> ${d.education}</p>
+      <div class="social-share">
+        ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
+        ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
+        ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WhatsApp</a>` : ''}
+        ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
+        <button class="share-btn" onclick="shareCard('${d.name}')">📤 Share</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
+</script>
+
+</body>
+</html>
