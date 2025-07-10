@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
   <style>
     body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
-    header { background: #bb1f5b; color: white; padding: 1em; text-align: center; }
+    header { background: #004080; color: white; padding: 1em; text-align: center; }
     .swiper { width: 100%; height: auto; }
     .swiper-slide img { width: 100%; height: auto; object-fit: cover; }
     .filters {
@@ -35,12 +35,7 @@
       position: relative;
     }
     .card:hover { transform: scale(1.02); }
-    .card img {
-      width: 100%;
-      border-radius: 4px;
-      height: 200px;
-      object-fit: cover;
-    }
+    .card img { width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
     .social a, .actions button {
       margin-right: 0.5em;
       text-decoration: none;
@@ -53,8 +48,6 @@
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 1.1em;
-      font-weight: bold;
     }
     @media (max-width: 768px) {
       .grid {
@@ -62,7 +55,6 @@
         flex-wrap: nowrap;
         justify-content: flex-start;
         scroll-snap-type: x mandatory;
-        padding-left: 1em;
       }
       .card {
         flex: 0 0 90%;
@@ -176,7 +168,7 @@ function filterData() {
 }
 
 function downloadCard(card, name) {
-  html2canvas(card, { useCORS: true }).then(canvas => {
+  html2canvas(card).then(canvas => {
     const link = document.createElement('a');
     link.download = name + '.png';
     link.href = canvas.toDataURL();
@@ -200,43 +192,31 @@ function renderCards(dataset) {
   const grid = document.getElementById('cardGrid');
   grid.innerHTML = '';
   if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
-  
   dataset.forEach((d, i) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.style.backgroundColor = cardColors[i % cardColors.length];
-
-    const imageUrl = d.image || 'https://via.placeholder.com/300x200?text=No+Image';
-    const image = document.createElement('img');
-    image.src = imageUrl;
-    image.alt = d.name;
-    image.setAttribute('crossorigin', 'anonymous');
-
-    const socialLinks = `
-      ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
-      ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
-      ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
-      ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
-    `;
-
     card.innerHTML = `
+      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}">
       <h3>${d.name}</h3>
       <p><strong>पद:</strong> ${d.designation}</p>
       <p><strong>गांव:</strong> ${d.village}</p>
       <p><strong>शिक्षा:</strong> ${d.education}</p>
-      <div class="social">${socialLinks}</div>
+      <div class="social">
+        ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
+        ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
+        ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
+        ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
+      </div>
       <div class="actions">
         <button onclick="downloadCard(this.closest('.card'), '${d.name}')">⬇</button>
         <button onclick="shareCard('${d.name}')">📤 Share</button>
-      </div>
-    `;
-
-    card.prepend(image); // Add image at the top
+      </div>`;
     grid.appendChild(card);
   });
 }
 
-  new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
+new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
 </script>
 </body>
 </html>
