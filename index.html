@@ -200,31 +200,43 @@ function renderCards(dataset) {
   const grid = document.getElementById('cardGrid');
   grid.innerHTML = '';
   if (dataset.length === 0) return grid.innerHTML = '<p>No results found.</p>';
+  
   dataset.forEach((d, i) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.style.backgroundColor = cardColors[i % cardColors.length];
+
+    const imageUrl = d.image || 'https://via.placeholder.com/300x200?text=No+Image';
+    const image = document.createElement('img');
+    image.src = imageUrl;
+    image.alt = d.name;
+    image.setAttribute('crossorigin', 'anonymous');
+
+    const socialLinks = `
+      ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
+      ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
+      ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
+      ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
+    `;
+
     card.innerHTML = `
-      <img src="${d.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${d.name}" crossOrigin="anonymous">
       <h3>${d.name}</h3>
       <p><strong>पद:</strong> ${d.designation}</p>
       <p><strong>गांव:</strong> ${d.village}</p>
       <p><strong>शिक्षा:</strong> ${d.education}</p>
-      <div class="social">
-        ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
-        ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
-        ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WA</a>` : ''}
-        ${d.blog ? `<a href="${d.blog}" target="_blank">Blog</a>` : ''}
-      </div>
+      <div class="social">${socialLinks}</div>
       <div class="actions">
         <button onclick="downloadCard(this.closest('.card'), '${d.name}')">⬇</button>
         <button onclick="shareCard('${d.name}')">📤 Share</button>
-      </div>`;
+      </div>
+    `;
+
+    card.prepend(image); // Add image at the top
     grid.appendChild(card);
   });
 }
 
-new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
+  new Swiper('.swiper', { loop: true, autoplay: { delay: 4000 } });
 </script>
 </body>
 </html>
