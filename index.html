@@ -249,8 +249,11 @@ function renderCardsInChunks() {
       <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
   ${d.designation ? `<p><strong>पद:</strong> ${d.designation}</p>` : ''}
-  ${d.village ? `<p><strong>गांव:</strong> ${d.village}</p>` : ''}
-  ${d.education ? `<p><strong>शिक्षा:</strong> ${d.education}</p>` : ''}      <div class="social-share">
+  ${d.village ? `<p><strong>ग्राम(Village):</strong> ${d.village}</p>` : ''}
+  ${d.block ? `<p><strong>क्षेत्र (Block):</strong> ${d.block}</p>` : ''}
+  ${d.district ? `<p><strong>जिला(District):</strong> ${d.district}</p>` : ''}
+  ${d.education ? `<p><strong>शिक्षा:</strong> ${d.education}</p>` : ''}
+  ${d.vote ? `<p><strong>प्राप्त मत(Votes Gained):</strong> ${d.vote}</p>` : ''}      <div class="social-share">
         ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
         ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
         ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WhatsApp</a>` : ''}
