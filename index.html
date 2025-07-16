@@ -248,7 +248,7 @@ function renderCardsInChunks() {
     card.innerHTML = `
       <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
-  ${d.designation ? `<p><strong>पद(Designation) :</strong> ${d.designation}</p>` : ''}
+  ${d.designation ? `<p><strong>पद(Role) :</strong> ${d.designation}</p>` : ''}
   ${d.period ? `<p><strong>अवधि(Period) :</strong> ${d.period}</p>` : ''}
   ${d.village ? `<p><strong>ग्राम(Village) :</strong> ${d.village}</p>` : ''}
   ${d.block ? `<p><strong>क्षेत्र(Block) :</strong> ${d.block}</p>` : ''}
