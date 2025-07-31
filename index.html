@@ -157,8 +157,8 @@ fetch('rajkaj db - leaders.csv')
   .then(csv => {
     const lines = csv.split('\n').slice(1);
     data = lines.map(line => {
-      const [rajnetaid, name, designation, state, district, block, village, ward, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
-      return { rajnetaid, name, designation, state, district, block, village, ward, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
+      const [rajnetaid, name, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
+      return { rajnetaid, name, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
     });
     data = data.filter(d => d.publish?.trim().toLowerCase() === "yes");
     populateFilters();
@@ -260,6 +260,7 @@ function renderCardsInChunks() {
   ${d.village ? `<p><strong>ग्राम पंचायत(Village) :</strong> ${d.village}</p>` : ''}
   ${d.ward ? `<p><strong>वार्ड(Ward) :</strong> ${d.ward}</p>` : ''}
   ${d.block ? `<p><strong>विकास खण्ड(Block) :</strong> ${d.block}</p>` : ''}
+  ${d.municipality ? `<p><strong>ग्रशहरी निकाय(Municipality) :</strong> ${d.municipality}</p>` : ''}
   ${d.district ? `<p><strong>जिला(District) :</strong> ${d.district}</p>` : ''}
   ${d.education ? `<p><strong>शिक्षा(Education) :</strong> ${d.education}</p>` : ''}
   ${d.vote ? `<p><strong>प्राप्त मत(Votes Gained) :</strong> ${d.vote}</p>` : ''}      <div class="social-share">
