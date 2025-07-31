@@ -157,8 +157,8 @@ fetch('rajkaj db - leaders.csv')
   .then(csv => {
     const lines = csv.split('\n').slice(1);
     data = lines.map(line => {
-      const [rajnetaid, name, designation, period, state, district, block, village, ward, education, vote, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
-      return { rajnetaid, name, designation, period, state, district, block, village, ward, education, vote, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
+      const [rajnetaid, name, designation, state, district, block, village, ward, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
+      return { rajnetaid, name, designation, state, district, block, village, ward, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
     });
     data = data.filter(d => d.publish?.trim().toLowerCase() === "yes");
     populateFilters();
