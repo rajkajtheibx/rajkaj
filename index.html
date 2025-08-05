@@ -157,8 +157,8 @@ fetch('rajkaj db - leaders.csv')
   .then(csv => {
     const lines = csv.split('\n').slice(1);
     data = lines.map(line => {
-      const [rajnetaid, name, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
-      return { rajnetaid, name, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
+      const [rajnetaid, name, fatherhusband, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone] = line.split(',');
+      return { rajnetaid, name, fatherhusband, designation, state, district, block, village, ward, municipality, education, vote, period, image, fb, twitter, whatsapp, blog, publish, contactinfo, phone };
     });
     data = data.filter(d => d.publish?.trim().toLowerCase() === "yes");
     populateFilters();
@@ -254,6 +254,7 @@ function renderCardsInChunks() {
     card.innerHTML = `
       <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
+  ${d.fatherhusband ? `<p><strong>पिता/पति(Father/Husband) :</strong> ${d.fatherhusband}</p>` : ''}
   ${d.rajnetaid ? `<p><strong>डिजिटल कोड(ID) :</strong> ${d.rajnetaid}</p>` : ''}
   ${d.designation ? `<p><strong>पद(Role) :</strong> ${d.designation}</p>` : ''}
   ${d.period ? `<p><strong>अवधि(Period) :</strong> ${d.period}</p>` : ''}
