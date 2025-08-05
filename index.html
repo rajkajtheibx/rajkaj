@@ -254,17 +254,17 @@ function renderCardsInChunks() {
     card.innerHTML = `
       <img loading="lazy" src="${d.image && d.image.trim() !== '' ? d.image : './default.jpg'}" alt="${d.name}">
       <h3>${d.name}</h3>
-  ${d.fatherhusband ? `<p><strong>पिता/पति</strong> (Father/Husband) : ${d.fatherhusband}</p>` : ''}
-  ${d.rajnetaid ? `<p><strong>डिजिटल कोड(ID) :</strong> ${d.rajnetaid}</p>` : ''}
-  ${d.designation ? `<p><strong>पद(Role) :</strong> ${d.designation}</p>` : ''}
-  ${d.period ? `<p><strong>अवधि(Period) :</strong> ${d.period}</p>` : ''}
-  ${d.village ? `<p><strong>ग्राम पंचायत(Village) :</strong> ${d.village}</p>` : ''}
-  ${d.ward ? `<p><strong>वार्ड(Ward) :</strong> ${d.ward}</p>` : ''}
-  ${d.block ? `<p><strong>विकास खण्ड(Block) :</strong> ${d.block}</p>` : ''}
-  ${d.municipality ? `<p><strong>शहरी निकाय(Municipality) :</strong> ${d.municipality}</p>` : ''}
-  ${d.district ? `<p><strong>जिला(District) :</strong> ${d.district}</p>` : ''}
-  ${d.education ? `<p><strong>शिक्षा(Education) :</strong> ${d.education}</p>` : ''}
-  ${d.vote ? `<p><strong>प्राप्त मत(Votes Gained) :</strong> ${d.vote}</p>` : ''}      <div class="social-share">
+  ${d.fatherhusband ? `<p><strong>पिता/पति</strong>(Father/Husband): ${d.fatherhusband}</p>` : ''}
+  ${d.rajnetaid ? `<p><strong>डिजिटल कोड</strong>(ID): ${d.rajnetaid}</p>` : ''}
+  ${d.designation ? `<p><strong>पद</strong>(Role): ${d.designation}</p>` : ''}
+  ${d.period ? `<p><strong>अवधि</strong>(Period): ${d.period}</p>` : ''}
+  ${d.village ? `<p><strong>ग्राम पंचायत</strong>(Village): ${d.village}</p>` : ''}
+  ${d.ward ? `<p><strong>वार्ड</strong>(Ward): ${d.ward}</p>` : ''}
+  ${d.block ? `<p><strong>विकास खण्ड</strong>(Block): ${d.block}</p>` : ''}
+  ${d.municipality ? `<p><strong>शहरी निकाय</strong>(Municipality): ${d.municipality}</p>` : ''}
+  ${d.district ? `<p><strong>जिला</strong>(District): ${d.district}</p>` : ''}
+  ${d.education ? `<p><strong>शिक्षा</strong>(Education): ${d.education}</p>` : ''}
+  ${d.vote ? `<p><strong>प्राप्त मत</strong>(Votes Gained): ${d.vote}</p>` : ''}      <div class="social-share">
         ${d.fb ? `<a href="${d.fb}" target="_blank">FB</a>` : ''}
         ${d.twitter ? `<a href="${d.twitter}" target="_blank">Twitter</a>` : ''}
         ${d.whatsapp ? `<a href="https://wa.me/${d.whatsapp}" target="_blank">WhatsApp</a>` : ''}
